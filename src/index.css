@@ -225,3 +225,115 @@ html.lenis, html.lenis body {
     font-size: 32px;
   }
 }
+
+/* ─── Tech Stack Mobile CSS Grid ─── */
+@media screen and (max-width: 1024px) {
+  .techstack {
+    height: auto;
+    padding: 80px 0;
+    margin-bottom: 0;
+    margin-top: 40px;
+  }
+  .techstack h2 {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 40px;
+  }
+}
+
+.tech-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+  margin: 60px auto 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 480px) {
+  .tech-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on very small mobile screens */
+    gap: 12px;
+    margin-top: 40px;
+  }
+}
+
+.tech-grid-card {
+  background: rgba(10, 10, 12, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.tech-grid-card:hover,
+.tech-grid-card:active {
+  transform: translateY(-5px) scale(1.03);
+  border-color: rgba(255, 46, 91, 0.2);
+  background: rgba(255, 46, 91, 0.02);
+  box-shadow: 0 15px 40px rgba(255, 46, 91, 0.08), 
+              0 0 20px rgba(255, 46, 91, 0.02);
+}
+
+.tech-grid-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(circle at center, var(--glowColor, rgba(255, 46, 91, 0.15)), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tech-grid-card:hover::after,
+.tech-grid-card:active::after {
+  opacity: 1;
+}
+
+.tech-grid-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+  transition: transform 0.4s ease;
+  z-index: 1;
+}
+
+.tech-grid-card:hover .tech-grid-logo,
+.tech-grid-card:active .tech-grid-logo {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 12px var(--glowColor, rgba(255, 46, 91, 0.4)));
+}
+
+.tech-grid-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--textSecondary);
+  font-family: "JetBrains Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.tech-grid-card:hover .tech-grid-name,
+.tech-grid-card:active .tech-grid-name {
+  color: var(--textPrimary);
+}
+

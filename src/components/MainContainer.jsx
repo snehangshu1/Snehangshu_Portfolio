@@ -46,11 +46,9 @@ const MainContainer = ({ children }) => {
             <WhatIDo />
             <Career />
             <Work />
-            {isDesktopView && (
-              <Suspense fallback={<div style={{ textAlign: "center", color: "#fff", padding: "50px" }}>Loading Canvas....</div>}>
-                <TechStack />
-              </Suspense>
-            )}
+            <Suspense fallback={<div style={{ textAlign: "center", color: "#fff", padding: "50px" }}>Loading Canvas....</div>}>
+              <TechStack />
+            </Suspense>
             <Contact />
           </div>
         </div>

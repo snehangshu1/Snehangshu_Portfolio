@@ -384,6 +384,10 @@ h2.landing-info-h2 {
   h2.landing-info-h2 {
     margin-left: 0;
   }
+  .character-model::after,
+  .character-model::before {
+    display: none !important;
+  }
 }
 
 @media screen and (max-width: 500px) {
