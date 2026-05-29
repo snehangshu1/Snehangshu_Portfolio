@@ -1,0 +1,150 @@
+.header {
+  display: flex;
+  max-width: var(--cMaxWidth);
+  width: var(--cWidth);
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px;
+  margin-bottom: -100px;
+  box-sizing: border-box;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  z-index: 9999;
+}
+
+/* ─── Glass Pill Container ─── */
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 8px -16px;
+  background: var(--glassBackground);
+  backdrop-filter: var(--glassBackdrop);
+  -webkit-backdrop-filter: var(--glassBackdrop);
+  border: 1px solid var(--glassBorder);
+  border-radius: 100px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.header.header-scrolled::before {
+  opacity: 1;
+}
+
+.header ul {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-gap: 40px;
+  row-gap: 8px;
+  align-items: end;
+}
+
+.header ul li {
+  margin-left: 0px;
+  letter-spacing: 0.5px;
+  color: var(--textSecondary);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.header ul li a {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+/* Smooth underline hover */
+.header ul li a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--textPrimary);
+  transition: width 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.header ul li a:hover::after {
+  width: 100%;
+}
+
+.header ul li a:hover {
+  color: var(--textPrimary);
+}
+
+.navbar-connect {
+  position: absolute;
+  display: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  font-weight: 400;
+  color: var(--textSecondary);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.navbar-connect:hover {
+  color: var(--textPrimary);
+}
+
+.navbar-title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: var(--textPrimary);
+  text-transform: uppercase;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.navbar-title:hover {
+  color: var(--textPrimary);
+  opacity: 0.7;
+}
+
+@media only screen and (min-width: 500px) {
+  .header {
+    padding: 20px 0px;
+  }
+  .header ul {
+    flex-direction: row;
+    align-items: center;
+    font-size: 14px;
+  }
+  .header ul li {
+    color: var(--textSecondary);
+  }
+  .navbar-title {
+    font-size: 15px;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .navbar-connect {
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .header {
+    padding: 28px 0px;
+  }
+  .header ul {
+    column-gap: 60px;
+    font-size: 14px;
+  }
+  .navbar-connect {
+    font-size: 13px;
+  }
+  .navbar-title {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,106 @@
+.icons-section {
+  position: fixed;
+  max-width: var(--cMaxWidth);
+  width: var(--cWidth);
+  bottom: 0;
+  z-index: 99;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.social-icons {
+  position: absolute;
+  left: -20px;
+  bottom: 20px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 999;
+  padding: 10px;
+}
+
+.social-icons a:hover {
+  color: var(--textPrimary) !important;
+  opacity: 0.9;
+}
+
+.social-icons span {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  display: flex;
+}
+
+.social-icons a {
+  --siLeft: 50%;
+  --siTop: 50%;
+  position: absolute;
+  left: var(--siLeft, 50%);
+  top: var(--siTop, 50%);
+  transform: translate(-50%, -50%);
+  display: flex;
+  font-size: 23px;
+  will-change: left, top;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  color: var(--textSecondary);
+}
+
+.resume-button {
+  position: absolute;
+  z-index: 99;
+  display: flex;
+  gap: 5px;
+  bottom: 40px;
+  right: 0;
+  width: auto;
+  text-wrap: nowrap;
+  letter-spacing: 3px;
+  font-size: 13px;
+  line-height: 13px;
+  font-weight: 500;
+  color: var(--textMuted);
+  cursor: pointer;
+  transition: color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transform-origin: left bottom;
+  transform: translateX(100%) rotateZ(-90deg);
+  font-family: "Inter", sans-serif;
+}
+
+.resume-button:hover {
+  color: var(--textPrimary);
+}
+
+.resume-button:hover span {
+  color: var(--textSecondary);
+}
+
+div.resume-button span {
+  color: var(--textMuted);
+  font-size: 17px;
+  margin-top: -1px;
+  display: flex;
+  align-items: center;
+  transition: color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@media only screen and (min-width: 900px) {
+  .social-icons {
+    display: flex;
+    gap: 20px;
+  }
+  .social-icons a {
+    font-size: 24px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .resume-button {
+    transform: none;
+    font-size: 14px;
+    line-height: 14px;
+  }
+  div.resume-button span {
+    font-size: 20px;
+    margin-top: -1.5px;
+  }
+}
