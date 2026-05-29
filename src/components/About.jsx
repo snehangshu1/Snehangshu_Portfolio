@@ -5,16 +5,20 @@ const About = () => {
     <div className="about-section" id="about">
       <div className="about-me">
         <h3 className="title">About Me</h3>
-        <p className="para">
-          I am Snehangshu, a full stack developer, creative builder, and entrepreneur 
-          focused on creating cinematic digital experiences, high-performance web products, 
-          and scalable startup platforms. Combining design precision with technical mastery, 
-          I transform concepts into immersive futuristic tech.
-        </p>
+        <h2 className="about-hook">I don&apos;t just write code—I build experiences.</h2>
+        <div className="about-details">
+          <p className="para">
+            As a developer, I&apos;m driven by curiosity, creativity, and the desire to create meaningful digital products. From interactive web applications to future startup ideas, I enjoy transforming concepts into reality through technology.
+          </p>
+          <p className="para">
+            Currently studying at BITS Pilani and NIAT Hyderabad, I&apos;m focused on mastering full-stack development, AI, and modern software engineering while preparing for the next generation of innovative products.
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default About;
+
 

@@ -342,6 +342,11 @@ h2.landing-info-h2 {
 
 /* ─── Responsive ─── */
 @media screen and (max-width: 1024px) {
+  .landing-section {
+    height: auto;
+    min-height: var(--vh);
+    padding-bottom: 80px;
+  }
   .landing-intro {
     position: relative;
     top: auto;
