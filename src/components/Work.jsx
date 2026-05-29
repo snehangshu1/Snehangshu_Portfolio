@@ -164,9 +164,14 @@ const Work = () => {
   };
 
   // Spotlight Follow and Mouse Parallax Tilt
+  const handleMouseEnter = (e) => {
+    const card = e.currentTarget;
+    card.rect = card.getBoundingClientRect();
+  };
+
   const handleMouseMove = (e) => {
     const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
+    const rect = card.rect || card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
@@ -264,6 +269,7 @@ const Work = () => {
                     if (isLeft) handlePrev();
                     if (isRight) handleNext();
                   }}
+                  onMouseEnter={isActive ? handleMouseEnter : undefined}
                   onMouseMove={isActive ? handleMouseMove : undefined}
                   onMouseLeave={isActive ? handleMouseLeave : undefined}
                 >

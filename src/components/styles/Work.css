@@ -627,6 +627,9 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .work-section-new {
+    overflow: visible;
+  }
   .work-grid-header {
     margin-bottom: 40px;
     gap: 20px;
@@ -634,12 +637,31 @@
   }
   .work-header-left h2 { font-size: 34px; }
   .work-subtitle { font-size: 14.5px; }
+
+  /* Flatten 3D stage on mobile to prevent clipping */
   .work-carousel-stage {
-    height: 560px;
+    height: auto;
+    min-height: 520px;
+    perspective: none;
+    transform-style: flat;
   }
+
+  .work-carousel-container {
+    transform-style: flat;
+    min-height: 520px;
+  }
+
+  /* Active card: remove 3D transforms */
   .work-carousel-card {
-    width: 340px;
-    height: 500px;
+    width: 360px;
+    max-width: calc(100vw - 90px);
+    height: auto;
+    min-height: 480px;
+  }
+  .work-carousel-card.active {
+    transform: none;
+    z-index: 20;
+    opacity: 1;
   }
   .work-carousel-card.left {
     display: none !important;
@@ -650,12 +672,16 @@
   .work-card-content {
     padding: 20px;
     gap: 12px;
+    height: auto;
   }
   .work-card-info p {
-    font-size: 11px;
-    -webkit-line-clamp: 2;
+    font-size: 11.5px;
+    -webkit-line-clamp: 3;
   }
-  .work-metrics-strip { display: none; } /* Hide achievements strip on tablet sizes to make text fit */
+  .work-card-image-wrap {
+    aspect-ratio: 16 / 9;
+  }
+  .work-metrics-strip { display: none; }
   .work-card-actions {
     flex-direction: column;
     gap: 8px;
@@ -665,43 +691,62 @@
     width: 100%;
     box-sizing: border-box;
     justify-content: center;
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 10.5px;
   }
+  .carousel-nav-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+  .prev-btn { left: 4px; }
+  .next-btn { right: 4px; }
 }
 
 @media only screen and (max-width: 480px) {
+  .work-section-new {
+    overflow: visible;
+  }
   .work-header-left h2 { font-size: 28px; }
+  .work-subtitle { font-size: 13px; }
+
   .work-carousel-stage {
-    height: 580px;
+    min-height: 460px;
+  }
+  .work-carousel-container {
+    min-height: 460px;
   }
   .work-carousel-card {
-    width: 290px;
-    height: 520px;
+    width: 300px;
+    max-width: calc(100vw - 70px);
+    min-height: 440px;
   }
-  .work-carousel-card.left {
-    display: none !important;
+  .work-card-content {
+    padding: 16px;
+    gap: 10px;
   }
-  .work-carousel-card.right {
-    display: none !important;
+  .work-card-info h3 { font-size: 17px; }
+  .work-card-info p {
+    font-size: 11px;
+    -webkit-line-clamp: 2;
+  }
+  .work-card-image-wrap {
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
   }
   .carousel-nav-btn {
-    width: 42px;
-    height: 42px;
-    font-size: 20px;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
   }
-  .prev-btn { left: -10px; }
-  .next-btn { right: -10px; }
+  .prev-btn { left: 2px; }
+  .next-btn { right: 2px; }
   .work-progress-segment {
     width: 32px;
   }
   .work-progress-segment.active {
     width: 48px;
   }
-  .work-card-content {
-    padding: 20px;
-    gap: 12px;
-  }
   .work-card-actions {
     flex-direction: column;
     gap: 8px;
@@ -711,7 +756,7 @@
     width: 100%;
     box-sizing: border-box;
     justify-content: center;
-    padding: 8px 16px;
+    padding: 8px 14px;
     font-size: 10px;
   }
 }
