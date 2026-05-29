@@ -55,7 +55,20 @@ const Scene = () => {
     let progress = setProgress((value) => setLoading(value));
     const { loadCharacter } = setCharacter(renderer, scene, camera);
 
+    let progressSnapped = false;
+    const snapProgress = () => {
+      if (progressSnapped) return Promise.resolve();
+      progressSnapped = true;
+      return progress.loaded();
+    };
+
+    // Failsafe snap loading screen to 100% if decryption/compile takes more than 1.2s
+    const failsafeTimeout = setTimeout(() => {
+      snapProgress();
+    }, 1200);
+
     loadCharacter().then((gltf) => {
+      clearTimeout(failsafeTimeout);
       if (!active) {
         if (gltf && gltf.scene) gltf.scene.clear();
         return;
@@ -71,7 +84,7 @@ const Scene = () => {
         headBone = charScene.getObjectByName("spine006") || null;
         screenLight = charScene.getObjectByName("screenlight") || null;
 
-        progress.loaded().then(() => {
+        snapProgress().then(() => {
           setTimeout(() => {
             light.turnOnLights();
             animations.startIntro();
@@ -85,6 +98,8 @@ const Scene = () => {
       }
     }).catch((err) => {
       console.error("Failed to compile scene details:", err);
+      clearTimeout(failsafeTimeout);
+      snapProgress();
     });
 
     let mouse = { x: 0, y: 0 };

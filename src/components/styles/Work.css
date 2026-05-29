@@ -642,18 +642,10 @@
     height: 460px;
   }
   .work-carousel-card.left {
-    transform: translate3d(-140px, 0, -80px) rotateY(16deg) scale(0.76);
-    opacity: 0.1;
-  }
-  .work-carousel-card.left:hover {
-    transform: translate3d(-140px, 0, -50px) rotateY(12deg) scale(0.79);
+    display: none !important;
   }
   .work-carousel-card.right {
-    transform: translate3d(140px, 0, -80px) rotateY(-16deg) scale(0.76);
-    opacity: 0.1;
-  }
-  .work-carousel-card.right:hover {
-    transform: translate3d(140px, 0, -50px) rotateY(-12deg) scale(0.79);
+    display: none !important;
   }
   .work-card-content {
     padding: 20px;
@@ -675,12 +667,10 @@
     height: 420px;
   }
   .work-carousel-card.left {
-    transform: translate3d(-90px, 0, -70px) rotateY(12deg) scale(0.74);
-    opacity: 0.05;
+    display: none !important;
   }
   .work-carousel-card.right {
-    transform: translate3d(90px, 0, -70px) rotateY(-12deg) scale(0.74);
-    opacity: 0.05;
+    display: none !important;
   }
   .work-card-image-wrap {
     display: none; /* Hide image banner on mobile layout to fit description + actions */

@@ -2,33 +2,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  place-items: center;
   justify-content: center;
   position: relative;
-  opacity: 1;
   height: auto;
   margin: auto;
-  margin-bottom: 250px;
-  padding: 120px 0px;
+  padding: 120px 0;
+  z-index: 10;
 }
 
 .career-section h2 {
   font-size: 56px;
-  line-height: 60px;
-  font-weight: 600;
+  line-height: 1.1;
+  font-weight: 700;
   text-align: center;
   color: var(--textPrimary);
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 80px;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-family: "Space Grotesk", sans-serif;
 }
 
 .career-section h2 > span {
-  font-family: "Space Grotesk", sans-serif;
   font-weight: 300;
   color: var(--textSecondary);
+  font-style: italic;
 }
 
 .career-info {
@@ -36,77 +34,97 @@
   display: flex;
   flex-direction: column;
   margin: 0px auto;
+  gap: 32px;
+  width: 100%;
 }
 
 .career-info-box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 50px;
+  align-items: center;
   color: var(--textPrimary);
+  background: rgba(10, 10, 12, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
+  padding: 36px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+}
+
+.career-info-box:hover {
+  border-color: rgba(255, 46, 91, 0.15);
+  background: rgba(255, 46, 91, 0.01);
+  box-shadow: 0 20px 50px rgba(255, 46, 91, 0.03);
+  transform: translateY(-2px);
 }
 
 .career-info-box p {
-  width: 40%;
-  font-size: 16px;
+  width: 45%;
+  font-size: 14.5px;
   font-weight: 400;
   margin: 0;
   color: var(--textSecondary);
-  line-height: 26px;
+  line-height: 1.65;
   font-family: "Inter", sans-serif;
 }
 
 .career-info-in {
   display: flex;
-  width: 40%;
+  width: 48%;
   justify-content: space-between;
-  gap: 50px;
+  align-items: center;
+  gap: 40px;
 }
 
 .career-info h3 {
-  font-size: 44px;
+  font-size: 40px;
   margin: 0;
-  font-weight: 600;
-  line-height: 44px;
-  color: var(--textPrimary);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accentColor);
   font-family: "Space Grotesk", sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 15px rgba(255, 46, 91, 0.25);
 }
 
 .career-info h4 {
-  font-size: 28px;
-  line-height: 28px;
-  letter-spacing: -0.01em;
-  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
   margin: 0;
   color: var(--textPrimary);
   font-family: "Space Grotesk", sans-serif;
 }
 
 .career-info h5 {
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  font-size: 16px;
-  text-transform: capitalize;
-  margin: 8px 0px;
-  color: var(--textSecondary);
-  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  letter-spacing: 1px;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin: 10px 0 0;
+  color: var(--textMuted);
+  font-family: "JetBrains Mono", monospace;
 }
 
 /* ─── Timeline Line ─── */
 .career-timeline {
   position: absolute;
-  top: -50px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
   height: 100%;
-  background-image: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.15) 20%,
-    rgba(255, 255, 255, 0.06) 50%,
-    transparent 95%
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 46, 91, 0.3) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
   );
   max-height: 0%;
+  pointer-events: none;
 }
 
 /* ─── Timeline Dot — Subtle Pulse ─── */
@@ -115,108 +133,68 @@
   bottom: 0;
   left: 50%;
   transform: translate(-50%, 50%);
-  background-color: var(--textPrimary);
-  width: 6px;
-  height: 6px;
-  border-radius: 50px;
-  box-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.15),
-    0px 0px 15px 4px rgba(255, 255, 255, 0.05);
+  background-color: var(--accentColor);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accentColor);
   animation: timelinePulse 2s ease-in-out infinite;
 }
 
 @keyframes timelinePulse {
   0%, 100% {
-    box-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.15),
-      0px 0px 15px 4px rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 8px var(--accentColor), 0 0 20px rgba(255, 46, 91, 0.2);
   }
   50% {
-    box-shadow: 0px 0px 6px 3px rgba(255, 255, 255, 0.2),
-      0px 0px 20px 6px rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 12px var(--accentColor), 0 0 30px rgba(255, 46, 91, 0.4);
+    transform: translate(-50%, 50%) scale(1.2);
   }
 }
 
 @media only screen and (max-width: 1400px) {
   .career-section h2 {
     font-size: 44px;
-    line-height: 48px;
   }
   .career-info h4 {
     font-size: 20px;
-    line-height: 22px;
-    width: 180px;
-  }
-  .career-info h5 {
-    font-size: 14px;
   }
   .career-info h3 {
-    font-size: 36px;
+    font-size: 32px;
   }
   .career-info-box p {
-    font-size: 14px;
-  }
-  .career-info-in {
-    width: 45%;
-    gap: 20px;
-  }
-  .career-info-box p {
-    width: 45%;
+    font-size: 13.5px;
   }
 }
 
 @media only screen and (max-width: 1025px) {
   .career-section {
-    padding: 70px 0px;
-    padding-top: 220px;
-    margin-top: -200px;
-    margin-bottom: 0;
+    padding: 80px 0;
   }
 }
 
 @media only screen and (max-width: 900px) {
   .career-info-box {
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 70px;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px;
   }
   .career-info-in,
   .career-info-box p {
     width: 100%;
-    padding-left: 10%;
-    box-sizing: border-box;
+  }
+  .career-info h3 {
+    order: -1;
   }
   .career-timeline {
-    left: 0%;
-  }
-  .career-container {
-    width: calc(100% - 25px);
+    display: none !important; /* Hide line behind boxes on mobile */
   }
 }
 
 @media only screen and (max-width: 600px) {
-  .career-info {
-    margin: 0;
-  }
   .career-section h2 {
-    width: 100%;
-    font-size: 36px;
-    line-height: 40px;
-    margin-top: 0px;
-  }
-  .career-info-in {
-    gap: 0px;
-  }
-  .career-info h3 {
-    font-size: 28px;
-  }
-  .career-info-in,
-  .career-info-box p {
-    padding-left: 5%;
-  }
-  .career-section {
-    padding-top: 90px;
-    margin-top: -70px;
-    align-items: start;
-    place-items: inherit;
-    justify-content: left;
+    font-size: 32px;
+    margin-bottom: 40px;
   }
 }
+

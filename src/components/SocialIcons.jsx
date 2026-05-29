@@ -20,12 +20,16 @@ const SocialIcons = () => {
       const link = elem.querySelector("a");
       if (!link) return;
 
-      const rect = elem.getBoundingClientRect();
+      let rect = elem.getBoundingClientRect();
       let mouseX = rect.width / 2;
       let mouseY = rect.height / 2;
       let currentX = 0;
       let currentY = 0;
       let active = true;
+
+      const updateRect = () => {
+        rect = elem.getBoundingClientRect();
+      };
 
       const updatePosition = () => {
         if (!active) return;
@@ -51,11 +55,15 @@ const SocialIcons = () => {
         }
       };
 
+      window.addEventListener("resize", updateRect);
+      elem.addEventListener("mouseenter", updateRect);
       document.addEventListener("mousemove", onMouseMove);
       updatePosition();
 
       cleanupFns.push(() => {
         active = false;
+        window.removeEventListener("resize", updateRect);
+        elem.removeEventListener("mouseenter", updateRect);
         document.removeEventListener("mousemove", onMouseMove);
       });
     });

@@ -17,7 +17,17 @@ const Cursor = () => {
       mousePos.y = e.clientY;
     };
 
+    const onMouseDown = () => {
+      cursor.classList.add("cursor-clicking");
+    };
+
+    const onMouseUp = () => {
+      cursor.classList.remove("cursor-clicking");
+    };
+
     document.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mouseup", onMouseUp);
 
     let animationFrameId;
     const loop = () => {
@@ -60,6 +70,8 @@ const Cursor = () => {
 
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mouseup", onMouseUp);
       cancelAnimationFrame(animationFrameId);
       items.forEach((item) => {
         item.removeEventListener("mouseover", onMouseOver);
@@ -68,7 +80,11 @@ const Cursor = () => {
     };
   }, []);
 
-  return <div className="cursor-main" ref={cursorRef}></div>;
+  return (
+    <div className="cursor-main" ref={cursorRef}>
+      <div className="cursor-inner"></div>
+    </div>
+  );
 };
 
 export default Cursor;

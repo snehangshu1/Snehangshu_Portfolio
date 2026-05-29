@@ -3,32 +3,40 @@
   max-width: var(--cMaxWidth);
   width: var(--cWidth);
   bottom: 0;
-  z-index: 99;
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 999;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  pointer-events: none;
 }
 
 .social-icons {
-  position: absolute;
-  left: -20px;
-  bottom: 20px;
-  display: none;
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  bottom: auto;
+  display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   z-index: 999;
-  padding: 10px;
-}
-
-.social-icons a:hover {
-  color: var(--textPrimary) !important;
-  opacity: 0.9;
+  padding: 16px 12px;
+  background: rgba(10, 10, 12, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 100px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
 }
 
 .social-icons span {
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   position: relative;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .social-icons a {
@@ -37,12 +45,23 @@
   position: absolute;
   left: var(--siLeft, 50%);
   top: var(--siTop, 50%);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
   display: flex;
-  font-size: 23px;
-  will-change: left, top;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  font-size: 20px;
+  will-change: left, top, transform;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, opacity 0.3s ease;
   color: var(--textSecondary);
+}
+
+.social-icons a:hover {
+  color: var(--accentColor) !important;
+  transform: translate(-50%, -50%) scale(1.2);
+  text-shadow: 0 0 10px rgba(255, 46, 91, 0.3);
+}
+
+.social-icons a:active {
+  transform: translate(-50%, -50%) scale(0.85);
+  transition: transform 0.1s ease;
 }
 
 .resume-button {
@@ -64,6 +83,7 @@
   transform-origin: left bottom;
   transform: translateX(100%) rotateZ(-90deg);
   font-family: "Inter", sans-serif;
+  pointer-events: auto;
 }
 
 .resume-button:hover {
@@ -83,13 +103,15 @@ div.resume-button span {
   transition: color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-@media only screen and (min-width: 900px) {
+@media only screen and (max-width: 1024px) {
   .social-icons {
-    display: flex;
-    gap: 20px;
-  }
-  .social-icons a {
-    font-size: 24px;
+    left: 50%;
+    bottom: 24px;
+    top: auto;
+    transform: translateX(-50%);
+    flex-direction: row;
+    padding: 10px 24px;
+    gap: 12px;
   }
 }
 
