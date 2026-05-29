@@ -110,32 +110,8 @@ function Pointer({ vec = new THREE.Vector3(), isActive }) {
   );
 }
 
-const techList = [
-  { name: "React", image: "/images/react2.webp", color: "rgba(97, 218, 251, 0.4)" },
-  { name: "Next.js", image: "/images/next2.webp", color: "rgba(255, 255, 255, 0.3)" },
-  { name: "Node.js", image: "/images/node2.webp", color: "rgba(51, 153, 51, 0.4)" },
-  { name: "Express", image: "/images/express.webp", color: "rgba(255, 255, 255, 0.3)" },
-  { name: "MongoDB", image: "/images/mongo.webp", color: "rgba(71, 162, 72, 0.4)" },
-  { name: "MySQL", image: "/images/mysql.webp", color: "rgba(68, 121, 161, 0.4)" },
-  { name: "TypeScript", image: "/images/typescript.webp", color: "rgba(49, 120, 198, 0.4)" },
-  { name: "JavaScript", image: "/images/javascript.webp", color: "rgba(247, 223, 30, 0.4)" },
-];
-
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => {
-    return typeof window !== "undefined" ? window.innerWidth <= 1024 : false;
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -212,63 +188,46 @@ const TechStack = () => {
     <div className="techstack">
       <h2>My Techstack</h2>
 
-      {(isMobile || (typeof window !== "undefined" && window.innerWidth <= 1024)) ? (
-        <div className="tech-grid-container">
-          {techList.map((tech, i) => (
-            <div
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        gl={{ alpha: true, stencil: false, depth: true, antialias: false }}
+        camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
+        onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
+        className="tech-canvas"
+      >
+        <ambientLight intensity={1} />
+        <spotLight
+          position={[20, 20, 25]}
+          penumbra={1}
+          angle={0.2}
+          color="white"
+          castShadow
+          shadow-mapSize={[512, 512]}
+        />
+        <directionalLight position={[0, 5, -4]} intensity={2} />
+        <Physics gravity={[0, 0, 0]}>
+          <Pointer isActive={isActive} />
+          {spheres.map((props, i) => (
+            <SphereGeo
               key={i}
-              className="tech-grid-card"
-              style={{ "--glowColor": tech.color }}
-              data-cursor="disable"
-            >
-              <img src={tech.image} alt={tech.name} className="tech-grid-logo" />
-              <span className="tech-grid-name">{tech.name}</span>
-            </div>
+              {...props}
+              material={materials[Math.floor(Math.random() * materials.length)]}
+              isActive={isActive}
+            />
           ))}
-        </div>
-      ) : (
-        <Canvas
-          shadows
-          dpr={[1, 2]}
-          gl={{ alpha: true, stencil: false, depth: true, antialias: false }}
-          camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-          onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
-          className="tech-canvas"
-        >
-          <ambientLight intensity={1} />
-          <spotLight
-            position={[20, 20, 25]}
-            penumbra={1}
-            angle={0.2}
-            color="white"
-            castShadow
-            shadow-mapSize={[512, 512]}
-          />
-          <directionalLight position={[0, 5, -4]} intensity={2} />
-          <Physics gravity={[0, 0, 0]}>
-            <Pointer isActive={isActive} />
-            {spheres.map((props, i) => (
-              <SphereGeo
-                key={i}
-                {...props}
-                material={materials[Math.floor(Math.random() * materials.length)]}
-                isActive={isActive}
-              />
-            ))}
-          </Physics>
-          <Environment
-            files="/models/char_enviorment.hdr"
-            environmentIntensity={0.5}
-            environmentRotation={[0, 4, 2]}
-          />
-          <EffectComposer enableNormalPass={false}>
-            <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-          </EffectComposer>
-        </Canvas>
-      )}
+        </Physics>
+        <Environment
+          files="/models/char_enviorment.hdr"
+          environmentIntensity={0.5}
+          environmentRotation={[0, 4, 2]}
+        />
+        <EffectComposer enableNormalPass={false}>
+          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+        </EffectComposer>
+      </Canvas>
     </div>
   );
 };
 
 export default TechStack;
-
