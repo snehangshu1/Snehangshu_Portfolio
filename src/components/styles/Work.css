@@ -673,20 +673,17 @@
 @media only screen and (max-width: 480px) {
   .work-header-left h2 { font-size: 28px; }
   .work-carousel-stage {
-    height: 510px;
+    height: 580px;
   }
   .work-carousel-card {
     width: 290px;
-    height: 450px;
+    height: 520px;
   }
   .work-carousel-card.left {
     display: none !important;
   }
   .work-carousel-card.right {
     display: none !important;
-  }
-  .work-card-image-wrap {
-    display: none; /* Hide image banner on mobile layout to fit description + actions */
   }
   .carousel-nav-btn {
     width: 42px;
