@@ -36,8 +36,8 @@ function createSphereConfigs(count, materialCount) {
 }
 
 const DESKTOP_SPHERE_COUNT = 30;
-const MOBILE_SPHERE_COUNT = 12;
-const TABLET_SPHERE_COUNT = 20;
+const MOBILE_SPHERE_COUNT = 30;
+const TABLET_SPHERE_COUNT = 30;
 
 function SphereGeo({
   vec = new THREE.Vector3(),
@@ -215,25 +215,25 @@ const TechStack = () => {
     };
   }, [materials]);
 
-  // Canvas DPR: mobile max 1.5, desktop max 2
-  const dprRange = device.isMobile ? [1, 1.5] : [1, 2];
+  // Canvas DPR: max 2 on all devices
+  const dprRange = [1, 2];
 
-  // Disable post-processing on mobile/tablet (< 768px) to fix framebuffer error
-  const enablePostProcessing = device.isDesktop;
+  // Enable post-processing on all devices to match desktop visual quality
+  const enablePostProcessing = true;
 
   return (
     <div className="techstack">
       <h2>My Techstack</h2>
 
       <Canvas
-        shadows={!device.isMobile}
+        shadows={true}
         dpr={dprRange}
         frameloop="demand"
         gl={{
           alpha: true,
-          stencil: enablePostProcessing,
+          stencil: true,
           depth: true,
-          antialias: !device.isMobile,
+          antialias: true,
           powerPreference: "high-performance",
         }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
@@ -250,8 +250,8 @@ const TechStack = () => {
           penumbra={1}
           angle={0.2}
           color="white"
-          castShadow={!device.isMobile}
-          shadow-mapSize={device.isMobile ? [256, 256] : [512, 512]}
+          castShadow={true}
+          shadow-mapSize={[512, 512]}
         />
         <directionalLight position={[0, 5, -4]} intensity={2} />
         <Physics gravity={[0, 0, 0]}>
