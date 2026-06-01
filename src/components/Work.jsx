@@ -60,21 +60,26 @@ const Work = () => {
   const isDragging = useRef(false);
 
   useGSAP(() => {
-    // Scroll reveal animation for the whole header section
-    gsap.fromTo(
-      ".work-grid-header",
-      { opacity: 0, y: 60 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".work-section-new",
-          start: "top 80%",
-        },
-      }
-    );
+    // If mobile view, instantly show the header to prevent ScrollTrigger initialization failures
+    if (window.innerWidth < 768) {
+      gsap.set(".work-grid-header", { opacity: 1, y: 0 });
+    } else {
+      // Scroll reveal animation for the whole header section
+      gsap.fromTo(
+        ".work-grid-header",
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".work-section-new",
+            start: "top 80%",
+          },
+        }
+      );
+    }
 
     // Initial 3D stage bounce reveal on scroll
     gsap.fromTo(
