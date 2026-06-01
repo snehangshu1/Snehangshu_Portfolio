@@ -803,3 +803,249 @@
   }
 }
 
+/* ─── Premium Mobile-Only Vertical Project List Styles ─── */
+.work-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  overflow: visible;
+  position: relative;
+  z-index: 5;
+}
+
+.work-mobile-card {
+  background: rgba(12, 12, 12, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+}
+
+.work-mobile-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.work-mobile-card-category {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accentColor); /* Neon Red */
+  font-family: "JetBrains Mono", monospace;
+  text-shadow: 0 0 10px rgba(190, 18, 60, 0.3);
+}
+
+.work-mobile-card-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.04);
+  font-family: "Space Grotesk", sans-serif;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.work-mobile-image-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--surfaceColor);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+}
+
+.work-mobile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85) saturate(0.95);
+}
+
+.work-mobile-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(10, 10, 10, 0.6) 100%);
+  pointer-events: none;
+}
+
+.work-mobile-card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.work-mobile-card-info h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--textPrimary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-family: "Space Grotesk", sans-serif;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.work-mobile-card-info p {
+  font-size: 13px;
+  color: var(--textSecondary);
+  margin: 8px 0 0;
+  line-height: 1.55;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+}
+
+.work-mobile-metrics-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 14px;
+  padding: 14px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.work-mobile-strip-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.work-mobile-metric-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--textPrimary);
+  font-family: "Space Grotesk", sans-serif;
+  line-height: 1;
+}
+
+.work-mobile-metric-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--textMuted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: "Inter", sans-serif;
+}
+
+.work-mobile-strip-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.work-mobile-achievements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  width: 100%;
+}
+
+.work-mobile-ach-bullet {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--textSecondary);
+  font-family: "JetBrains Mono", monospace;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.work-mobile-ach-bullet::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accentColor);
+  box-shadow: 0 0 6px var(--accentColor);
+}
+
+.work-mobile-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+}
+
+.work-mobile-chip {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--textSecondary);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.work-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.work-mobile-action-btn {
+  width: 100%;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-family: "JetBrains Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+@media only screen and (max-width: 480px) {
+  .work-mobile-card {
+    padding: 18px;
+    gap: 14px;
+    border-radius: 20px;
+  }
+  
+  .work-mobile-card-info h3 {
+    font-size: 19px;
+  }
+  
+  .work-mobile-card-info p {
+    font-size: 12px;
+  }
+  
+  .work-mobile-metrics-strip {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  
+  .work-mobile-metric-val {
+    font-size: 16px;
+  }
+}
+
+

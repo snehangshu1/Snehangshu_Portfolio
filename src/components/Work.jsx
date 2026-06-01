@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { MdArrowOutward, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
 import ProjectGlobe from "./ProjectGlobe";
-import { isTouchDevice } from "../hooks/useMobile";
+import { useDeviceInfo, isTouchDevice } from "../hooks/useMobile";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -51,6 +51,7 @@ const projects = [
 
 const Work = () => {
   const sectionRef = useRef(null);
+  const { isMobile } = useDeviceInfo();
   const [activeIndex, setActiveIndex] = useState(0);
   const isTouch = useRef(isTouchDevice());
 
@@ -234,167 +235,230 @@ const Work = () => {
           </div>
         </div>
 
-        {/* 3D Apple/Linear Style Deck */}
-        <div
-          className="work-carousel-stage"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMoveDrag}
-          onMouseUp={handleMouseUpDrag}
-          onMouseLeave={handleMouseUpDrag}
-        >
-          <button
-            className="carousel-nav-btn prev-btn"
-            onClick={handlePrev}
-            aria-label="Previous Project"
-            data-cursor="disable"
-          >
-            <MdChevronLeft />
-          </button>
+        {isMobile ? (
+          /* Premium Mobile-Only Vertical Project List */
+          <div className="work-mobile-list">
+            {projects.map((project, idx) => (
+              <div key={idx} className="work-mobile-card">
+                {/* Top Section */}
+                <div className="work-mobile-card-top">
+                  <span className="work-mobile-card-category">{project.category}</span>
+                  <span className="work-mobile-card-num">{project.num}</span>
+                </div>
 
-          <div className="work-carousel-container">
-            {projects.map((project, idx) => {
-              // Circular deck coordinate offsets
-              let offset = idx - activeIndex;
-              if (offset < -1) offset += projects.length;
-              if (offset > 1) offset -= projects.length;
+                {/* Image Banner */}
+                <div className="work-mobile-image-wrap">
+                  <img src={project.image} alt={project.title} className="work-mobile-image" />
+                  <div className="work-mobile-image-overlay"></div>
+                </div>
 
-              const isActive = idx === activeIndex;
-              const isLeft = offset === -1;
-              const isRight = offset === 1;
-              const isHidden = !isActive && !isLeft && !isRight;
+                {/* Content Details */}
+                <div className="work-mobile-card-bottom">
+                  <div className="work-mobile-card-info">
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                  </div>
 
-              return (
-                <div
-                  key={idx}
-                  className={`work-carousel-card ${isActive ? "active" : ""} ${isLeft ? "left" : ""} ${isRight ? "right" : ""} ${isHidden ? "hidden" : ""}`}
-                  onClick={() => {
-                    if (isLeft) handlePrev();
-                    if (isRight) handleNext();
-                  }}
-                  onMouseEnter={isActive && !isTouch.current ? handleMouseEnter : undefined}
-                  onMouseMove={isActive && !isTouch.current ? handleMouseMove : undefined}
-                  onMouseLeave={isActive && !isTouch.current ? handleMouseLeave : undefined}
-                >
-                  {/* Spotlight Overlay */}
-                  <div className="work-card-spotlight"></div>
-
-                  {/* Card Main Wrapper */}
-                  <div className="work-card-content">
-
-                    {/* Top Section */}
-                    <div
-                      className="work-card-top"
-                      style={{
-                        visibility: isActive ? "visible" : "hidden",
-                        opacity: isActive ? 1 : 0
-                      }}
-                    >
-                      <span className="work-card-num">{project.num}</span>
-                      <span className="work-card-category">{project.category}</span>
+                  {/* Mobile Metrics Strip */}
+                  <div className="work-mobile-metrics-strip">
+                    <div className="work-mobile-strip-metric">
+                      <span className="work-mobile-metric-val">{project.metrics.value}</span>
+                      <span className="work-mobile-metric-lbl">{project.metrics.label}</span>
                     </div>
-
-                    {/* Image Banner */}
-                    <div className="work-card-image-wrap">
-                      <img src={project.image} alt={project.title} className="work-card-image" />
-                      <div className="work-card-image-overlay"></div>
-                    </div>
-
-                    {/* Bottom Details Section (Only Interactive on Active) */}
-                    <div
-                      className="work-card-bottom"
-                      style={{
-                        visibility: isActive ? "visible" : "hidden",
-                        opacity: isActive ? 1 : 0,
-                        pointerEvents: isActive ? "auto" : "none"
-                      }}
-                    >
-                      <div className="work-card-info">
-                        <h3>{project.title}</h3>
-                        <p>{project.description}</p>
-                      </div>
-
-                      {/* Achievements Metrics Panel */}
-                      <div className="work-metrics-strip">
-                        <div className="work-strip-metric">
-                          <span className="work-metric-val">{project.metrics.value}</span>
-                          <span className="work-metric-lbl">{project.metrics.label}</span>
-                        </div>
-                        <div className="work-strip-divider"></div>
-                        <div className="work-achievements-flex">
-                          {project.achievements.map((ach, i) => (
-                            <span key={i} className="work-ach-bullet">{ach}</span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Tools and Action Badges */}
-                      <div className="work-card-meta">
-                        <div className="work-card-tools">
-                          {project.tools.map((tool, i) => (
-                            <span key={i} className="work-chip">{tool}</span>
-                          ))}
-                        </div>
-
-                        {/* Dual Action Buttons (Stripe / Apple Style) */}
-                        <div className="work-card-actions">
-                          {project.link && (
-                            <a
-                              href={project.link}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="work-action-btn primary-btn"
-                              data-cursor="disable"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Explore Live <MdArrowOutward />
-                            </a>
-                          )}
-                          {project.github && (
-                            <a
-                              href={project.github}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="work-action-btn secondary-btn"
-                              data-cursor="disable"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <FaGithub /> GitHub Code
-                            </a>
-                          )}
-                        </div>
-                      </div>
-
+                    <div className="work-mobile-strip-divider"></div>
+                    <div className="work-mobile-achievements">
+                      {project.achievements.map((ach, i) => (
+                        <span key={i} className="work-mobile-ach-bullet">{ach}</span>
+                      ))}
                     </div>
                   </div>
+
+                  {/* Tools and Badges */}
+                  <div className="work-mobile-tools">
+                    {project.tools.map((tool, i) => (
+                      <span key={i} className="work-mobile-chip">{tool}</span>
+                    ))}
+                  </div>
+
+                  {/* Dual Action Buttons */}
+                  <div className="work-mobile-actions">
+                    {project.link && (
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="work-mobile-action-btn primary-btn"
+                      >
+                        Explore Live <MdArrowOutward />
+                      </a>
+                    )}
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="work-mobile-action-btn secondary-btn"
+                      >
+                        <FaGithub /> GitHub Code
+                      </a>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-
-          <button
-            className="carousel-nav-btn next-btn"
-            onClick={handleNext}
-            aria-label="Next Project"
-            data-cursor="disable"
-          >
-            <MdChevronRight />
-          </button>
-        </div>
-
-        {/* Apple Style Segmented Progress Tracker */}
-        <div className="work-progress-bar">
-          {projects.map((_, idx) => (
+        ) : (
+          /* Desktop/Tablet 3D Card Stack Carousel */
+          <>
             <div
-              key={idx}
-              className={`work-progress-segment ${idx === activeIndex ? "active" : ""}`}
-              onClick={() => setActiveIndex(idx)}
-              title={`View Project ${idx + 1}`}
-            />
-          ))}
-        </div>
+              className="work-carousel-stage"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMoveDrag}
+              onMouseUp={handleMouseUpDrag}
+              onMouseLeave={handleMouseUpDrag}
+            >
+              <button
+                className="carousel-nav-btn prev-btn"
+                onClick={handlePrev}
+                aria-label="Previous Project"
+                data-cursor="disable"
+              >
+                <MdChevronLeft />
+              </button>
+
+              <div className="work-carousel-container">
+                {projects.map((project, idx) => {
+                  let offset = idx - activeIndex;
+                  if (offset < -1) offset += projects.length;
+                  if (offset > 1) offset -= projects.length;
+
+                  const isActive = idx === activeIndex;
+                  const isLeft = offset === -1;
+                  const isRight = offset === 1;
+                  const isHidden = !isActive && !isLeft && !isRight;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`work-carousel-card ${isActive ? "active" : ""} ${isLeft ? "left" : ""} ${isRight ? "right" : ""} ${isHidden ? "hidden" : ""}`}
+                      onClick={() => {
+                        if (isLeft) handlePrev();
+                        if (isRight) handleNext();
+                      }}
+                      onMouseEnter={isActive && !isTouch.current ? handleMouseEnter : undefined}
+                      onMouseMove={isActive && !isTouch.current ? handleMouseMove : undefined}
+                      onMouseLeave={isActive && !isTouch.current ? handleMouseLeave : undefined}
+                    >
+                      <div className="work-card-spotlight"></div>
+                      <div className="work-card-content">
+                        <div
+                          className="work-card-top"
+                          style={{
+                            visibility: isActive ? "visible" : "hidden",
+                            opacity: isActive ? 1 : 0
+                          }}
+                        >
+                          <span className="work-card-num">{project.num}</span>
+                          <span className="work-card-category">{project.category}</span>
+                        </div>
+
+                        <div className="work-card-image-wrap">
+                          <img src={project.image} alt={project.title} className="work-card-image" />
+                          <div className="work-card-image-overlay"></div>
+                        </div>
+
+                        <div
+                          className="work-card-bottom"
+                          style={{
+                            visibility: isActive ? "visible" : "hidden",
+                            opacity: isActive ? 1 : 0,
+                            pointerEvents: isActive ? "auto" : "none"
+                          }}
+                        >
+                          <div className="work-card-info">
+                            <h3>{project.title}</h3>
+                            <p>{project.description}</p>
+                          </div>
+
+                          <div className="work-metrics-strip">
+                            <div className="work-strip-metric">
+                              <span className="work-metric-val">{project.metrics.value}</span>
+                              <span className="work-metric-lbl">{project.metrics.label}</span>
+                            </div>
+                            <div className="work-strip-divider"></div>
+                            <div className="work-achievements-flex">
+                              {project.achievements.map((ach, i) => (
+                                <span key={i} className="work-ach-bullet">{ach}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="work-card-meta">
+                            <div className="work-card-tools">
+                              {project.tools.map((tool, i) => (
+                                <span key={i} className="work-chip">{tool}</span>
+                              ))}
+                            </div>
+
+                            <div className="work-card-actions">
+                              {project.link && (
+                                <a
+                                  href={project.link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="work-action-btn primary-btn"
+                                  data-cursor="disable"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  Explore Live <MdArrowOutward />
+                                </a>
+                              )}
+                              {project.github && (
+                                <a
+                                  href={project.github}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="work-action-btn secondary-btn"
+                                  data-cursor="disable"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <FaGithub /> GitHub Code
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                className="carousel-nav-btn next-btn"
+                onClick={handleNext}
+                aria-label="Next Project"
+                data-cursor="disable"
+              >
+                <MdChevronRight />
+              </button>
+            </div>
+
+            <div className="work-progress-bar">
+              {projects.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`work-progress-segment ${idx === activeIndex ? "active" : ""}`}
+                  onClick={() => setActiveIndex(idx)}
+                  title={`View Project ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
       </div>
     </div>

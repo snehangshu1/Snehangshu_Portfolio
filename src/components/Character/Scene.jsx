@@ -22,7 +22,13 @@ const Scene = () => {
   const [webglSupported] = useState(() => hasWebGL());
 
   useEffect(() => {
-    if (!canvasDiv.current || !webglSupported) return;
+    if (!canvasDiv.current) return;
+
+    if (!webglSupported) {
+      let progress = setProgress((value) => setLoading(value));
+      progress.loaded();
+      return;
+    }
 
     let active = true;
     const isTouch = isTouchDevice();
