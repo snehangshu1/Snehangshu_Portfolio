@@ -126,6 +126,8 @@ function Pointer({ vec = new THREE.Vector3(), isActive }) {
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
+  const containerRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
   const device = useDeviceInfo();
 
   // Determine sphere count based on device
@@ -142,6 +144,16 @@ const TechStack = () => {
   );
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { rootMargin: "200px", threshold: 0.01 }
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
     // Throttle scroll handler to fire max every 100ms
     const handleScroll = throttle(() => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -179,6 +191,7 @@ const TechStack = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
+      observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
       clearTimers();
       clickListeners.forEach(({ elem, listener }) => {
@@ -222,13 +235,13 @@ const TechStack = () => {
   const enablePostProcessing = true;
 
   return (
-    <div className="techstack">
+    <div className="techstack" ref={containerRef}>
       <h2>My Techstack</h2>
 
       <Canvas
         shadows={true}
         dpr={dprRange}
-        frameloop="demand"
+        frameloop={isVisible ? "always" : "never"}
         gl={{
           alpha: true,
           stencil: true,

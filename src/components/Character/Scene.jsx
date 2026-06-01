@@ -30,6 +30,17 @@ const Scene = () => {
       return;
     }
 
+    let inView = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+      },
+      { rootMargin: "150px", threshold: 0.01 }
+    );
+    if (canvasDiv.current) {
+      observer.observe(canvasDiv.current);
+    }
+
     let active = true;
     const isTouch = isTouchDevice();
     const screenWidth = window.innerWidth;
@@ -174,6 +185,7 @@ const Scene = () => {
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (!inView) return;
       frameCount++;
 
       // Always update delta to keep clock accurate
@@ -200,6 +212,7 @@ const Scene = () => {
     animate();
 
     return () => {
+      observer.disconnect();
       active = false;
       clearTimeout(debounce);
       cancelAnimationFrame(animationFrameId);

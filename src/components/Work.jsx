@@ -248,7 +248,7 @@ const Work = () => {
 
                 {/* Image Banner */}
                 <div className="work-mobile-image-wrap">
-                  <img src={project.image} alt={project.title} className="work-mobile-image" />
+                  <img src={project.image} alt={project.title} className="work-mobile-image" loading="lazy" />
                   <div className="work-mobile-image-overlay"></div>
                 </div>
 
@@ -366,7 +366,7 @@ const Work = () => {
                         </div>
 
                         <div className="work-card-image-wrap">
-                          <img src={project.image} alt={project.title} className="work-card-image" />
+                          <img src={project.image} alt={project.title} className="work-card-image" loading="lazy" />
                           <div className="work-card-image-overlay"></div>
                         </div>
 
