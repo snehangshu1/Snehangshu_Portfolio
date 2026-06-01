@@ -230,4 +230,42 @@ html.lenis, html.lenis body {
   }
 }
 
+/* ─── Mobile Performance Optimizations ─── */
+@media screen and (max-width: 767px) {
+  /* Faster tap response — removes 300ms delay */
+  body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 
+  /* Reset will-change on mobile to reduce GPU memory pressure */
+  * {
+    will-change: auto !important;
+  }
+
+  /* Reduce expensive filter effects on mobile */
+  .landing-spotlight {
+    filter: blur(40px);
+    width: 400px;
+    height: 400px;
+  }
+
+  /* Disable expensive continuous animations on mobile */
+  .work-spotlight {
+    animation: none;
+    filter: blur(60px);
+    width: 600px;
+    height: 600px;
+  }
+}
+
+/* ─── Reduced Motion Preference ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

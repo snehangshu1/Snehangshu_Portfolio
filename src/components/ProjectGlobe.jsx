@@ -1,9 +1,14 @@
 import { useEffect, useRef } from "react";
+import { useDeviceInfo, rafThrottle } from "../hooks/useMobile";
 
 const ProjectGlobe = () => {
   const canvasRef = useRef(null);
+  const device = useDeviceInfo();
 
   useEffect(() => {
+    // On mobile: skip the canvas animation entirely
+    if (device.isMobile) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -12,22 +17,24 @@ const ProjectGlobe = () => {
     let width = canvas.offsetWidth;
     let height = canvas.offsetHeight;
 
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    const dpr = Math.min(window.devicePixelRatio, device.isTablet ? 1.5 : 2);
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
 
-    // Dotted Globe Particles
+    // Reduce particles on tablet
+    const particleCount = device.isTablet ? 140 : 280;
     const particles = [];
-    const particleCount = 280;
     const sphereRadius = Math.min(width, height) * 0.38;
     
-    // Mouse coordinates relative to canvas
+    // Mouse coordinates relative to canvas — cached rect
     let mouse = { x: -1000, y: -1000, active: false };
+    let cachedRect = canvas.getBoundingClientRect();
 
     // Initialize particles in 3D sphere shape
     for (let i = 0; i < particleCount; i++) {
-      const theta = Math.acos(Math.random() * 2 - 1); // 0 to PI
-      const phi = Math.random() * Math.PI * 2;       // 0 to 2*PI
+      const theta = Math.acos(Math.random() * 2 - 1);
+      const phi = Math.random() * Math.PI * 2;
 
       particles.push({
         x: sphereRadius * Math.sin(theta) * Math.cos(phi),
@@ -36,10 +43,9 @@ const ProjectGlobe = () => {
         baseX: 0,
         baseY: 0,
         baseZ: 0,
-        color: Math.random() > 0.4 ? "#BE123C" : "#F5F5F5", // Red vs White
+        color: Math.random() > 0.4 ? "#BE123C" : "#F5F5F5",
         size: Math.random() * 1.5 + 0.8,
       });
-      // Save initial coordinates
       particles[i].baseX = particles[i].x;
       particles[i].baseY = particles[i].y;
       particles[i].baseZ = particles[i].z;
@@ -67,12 +73,12 @@ const ProjectGlobe = () => {
       point.z = z;
     };
 
-    const handleMouseMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+    // Throttle mousemove with RAF guard + use cached rect
+    const handleMouseMove = rafThrottle((e) => {
+      mouse.x = e.clientX - cachedRect.left;
+      mouse.y = e.clientY - cachedRect.top;
       mouse.active = true;
-    };
+    });
 
     const handleMouseLeave = () => {
       mouse.x = -1000;
@@ -80,27 +86,24 @@ const ProjectGlobe = () => {
       mouse.active = false;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
+
+    // Reduce max connections on tablet
+    const maxConnections = device.isTablet ? 1 : 2;
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Center coordinates
       const cx = width / 2;
       const cy = height / 2;
-
-      // Project and draw particles
       const projected = [];
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-
-        // Rotate particles in 3D
         rotateX(p, angleX);
         rotateY(p, angleY);
 
-        // Perspective projection
         const fov = 600;
         const cameraDistance = sphereRadius * 2.3;
         const scale = fov / (fov + p.z + cameraDistance);
@@ -108,7 +111,7 @@ const ProjectGlobe = () => {
         let projX = p.x * scale + cx;
         let projY = p.y * scale + cy;
 
-        // Mouse reaction (warp points near mouse)
+        // Mouse reaction
         if (mouse.active) {
           const dx = projX - mouse.x;
           const dy = projY - mouse.y;
@@ -117,7 +120,6 @@ const ProjectGlobe = () => {
 
           if (dist < maxDist) {
             const force = (maxDist - dist) / maxDist;
-            // Pull or push points slightly
             projX += (dx / dist) * force * 15;
             projY += (dy / dist) * force * 15;
           }
@@ -129,19 +131,19 @@ const ProjectGlobe = () => {
           z: p.z,
           size: p.size * scale * 2.2,
           color: p.color,
-          alpha: (p.z + sphereRadius) / (sphereRadius * 2), // Fade back points
+          alpha: (p.z + sphereRadius) / (sphereRadius * 2),
         });
       }
 
-      // Draw connection lines first (glowing network structure)
+      // Draw connection lines
       ctx.lineWidth = 0.45;
       for (let i = 0; i < projected.length; i++) {
         const p1 = projected[i];
-        if (p1.z < -20) continue; // Only draw connections for points on front-side for clarity
+        if (p1.z < -20) continue;
 
         let connections = 0;
         for (let j = i + 1; j < projected.length; j++) {
-          if (connections >= 2) break; // Limit connections per node for premium look
+          if (connections >= maxConnections) break;
           
           const p2 = projected[j];
           if (p2.z < -20) continue;
@@ -169,7 +171,6 @@ const ProjectGlobe = () => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         
-        // Premium glow effect for prominent particles
         if (p.z > sphereRadius * 0.5) {
           ctx.shadowBlur = 10;
           ctx.shadowColor = p.color;
@@ -180,9 +181,9 @@ const ProjectGlobe = () => {
         ctx.fillStyle = p.color === "#BE123C" ? `rgba(190, 18, 60, ${p.alpha * 0.95})` : `rgba(245, 245, 245, ${p.alpha * 0.9})`;
         ctx.fill();
       }
-      ctx.shadowBlur = 0; // Reset shadow
+      ctx.shadowBlur = 0;
 
-      // Draw a subtle outer halo ring
+      // Subtle outer halo ring
       ctx.strokeStyle = "rgba(255, 255, 255, 0.035)";
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -198,20 +199,51 @@ const ProjectGlobe = () => {
       if (!canvas) return;
       width = canvas.offsetWidth;
       height = canvas.offsetHeight;
-      canvas.width = width * window.devicePixelRatio;
-      canvas.height = height * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const newDpr = Math.min(window.devicePixelRatio, device.isTablet ? 1.5 : 2);
+      canvas.width = width * newDpr;
+      canvas.height = height * newDpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(newDpr, newDpr);
+      // Refresh cached rect
+      cachedRect = canvas.getBoundingClientRect();
     };
 
     window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [device.isMobile, device.isTablet]);
+
+  // Mobile: render a lightweight static SVG placeholder
+  if (device.isMobile) {
+    return (
+      <div className="project-globe-wrapper">
+        <svg viewBox="0 0 200 200" className="project-globe-canvas" style={{ width: '100%', height: '100%', opacity: 0.6 }}>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(190, 18, 60, 0.15)" strokeWidth="1" />
+          <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="0.5" />
+          <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(190, 18, 60, 0.08)" strokeWidth="0.5" />
+          {/* Scattered dots */}
+          {[...Array(20)].map((_, i) => {
+            const angle = (i / 20) * Math.PI * 2;
+            const r = 30 + Math.random() * 50;
+            return (
+              <circle
+                key={i}
+                cx={100 + Math.cos(angle) * r}
+                cy={100 + Math.sin(angle) * r}
+                r={1 + Math.random() * 1.5}
+                fill={i % 3 === 0 ? "rgba(190, 18, 60, 0.5)" : "rgba(245, 245, 245, 0.3)"}
+              />
+            );
+          })}
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div className="project-globe-wrapper">

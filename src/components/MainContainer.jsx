@@ -18,9 +18,13 @@ const MainContainer = ({ children }) => {
   useEffect(() => {
     setIsDesktopView(window.innerWidth > 1024);
     
+    let resizeTimeout = null;
     const resizeHandler = () => {
-      setSplitText();
-      setIsDesktopView(window.innerWidth > 1024);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setSplitText();
+        setIsDesktopView(window.innerWidth > 1024);
+      }, 200);
     };
 
     // Run once on load
@@ -29,6 +33,7 @@ const MainContainer = ({ children }) => {
     window.addEventListener("resize", resizeHandler, { passive: true });
     return () => {
       window.removeEventListener("resize", resizeHandler);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
     };
   }, []);
 

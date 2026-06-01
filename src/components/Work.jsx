@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { MdArrowOutward, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
 import ProjectGlobe from "./ProjectGlobe";
+import { isTouchDevice } from "../hooks/useMobile";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -51,6 +52,7 @@ const projects = [
 const Work = () => {
   const sectionRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const isTouch = useRef(isTouchDevice());
 
   // Drag and Swipe Tracking States
   const dragStart = useRef(0);
@@ -163,13 +165,15 @@ const Work = () => {
     isDragging.current = false;
   };
 
-  // Spotlight Follow and Mouse Parallax Tilt
+  // Spotlight Follow and Mouse Parallax Tilt (desktop only)
   const handleMouseEnter = (e) => {
+    if (isTouch.current) return;
     const card = e.currentTarget;
     card.rect = card.getBoundingClientRect();
   };
 
   const handleMouseMove = (e) => {
+    if (isTouch.current) return;
     const card = e.currentTarget;
     const rect = card.rect || card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -191,6 +195,7 @@ const Work = () => {
   };
 
   const handleMouseLeave = (e) => {
+    if (isTouch.current) return;
     const card = e.currentTarget;
     card.style.setProperty("--rotate-x", "0deg");
     card.style.setProperty("--rotate-y", "0deg");
@@ -269,9 +274,9 @@ const Work = () => {
                     if (isLeft) handlePrev();
                     if (isRight) handleNext();
                   }}
-                  onMouseEnter={isActive ? handleMouseEnter : undefined}
-                  onMouseMove={isActive ? handleMouseMove : undefined}
-                  onMouseLeave={isActive ? handleMouseLeave : undefined}
+                  onMouseEnter={isActive && !isTouch.current ? handleMouseEnter : undefined}
+                  onMouseMove={isActive && !isTouch.current ? handleMouseMove : undefined}
+                  onMouseLeave={isActive && !isTouch.current ? handleMouseLeave : undefined}
                 >
                   {/* Spotlight Overlay */}
                   <div className="work-card-spotlight"></div>

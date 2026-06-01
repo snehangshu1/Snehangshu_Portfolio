@@ -1,10 +1,14 @@
 import { useEffect, useRef } from "react";
 import "./styles/Cursor.css";
+import { isTouchDevice } from "../hooks/useMobile";
 
 const Cursor = () => {
   const cursorRef = useRef(null);
 
   useEffect(() => {
+    // Skip cursor entirely on touch devices — no RAF loop, no listeners
+    if (isTouchDevice()) return;
+
     let hover = false;
     const cursor = cursorRef.current;
     if (!cursor) return;
@@ -79,6 +83,9 @@ const Cursor = () => {
       });
     };
   }, []);
+
+  // Return null on touch devices — no invisible cursor element in DOM
+  if (isTouchDevice()) return null;
 
   return (
     <div className="cursor-main" ref={cursorRef}>

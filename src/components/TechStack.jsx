@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { useRef, useMemo, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, invalidate } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import {
@@ -9,6 +9,7 @@ import {
   RigidBody,
   CylinderCollider,
 } from "@react-three/rapier";
+import { useDeviceInfo, throttle } from "../hooks/useMobile";
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
@@ -25,9 +26,18 @@ const textures = imageUrls.map((url) => textureLoader.load(url));
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
-const spheres = [...Array(30)].map(() => ({
-  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
-}));
+// Pre-compute sphere configs with stable material indices to avoid
+// random material assignment during render (which breaks React's reconciliation)
+function createSphereConfigs(count, materialCount) {
+  return [...Array(count)].map((_, i) => ({
+    scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+    materialIndex: i % materialCount,
+  }));
+}
+
+const DESKTOP_SPHERE_COUNT = 30;
+const MOBILE_SPHERE_COUNT = 12;
+const TABLET_SPHERE_COUNT = 20;
 
 function SphereGeo({
   vec = new THREE.Vector3(),
@@ -53,6 +63,9 @@ function SphereGeo({
       );
 
     api.current.applyImpulse(impulse, true);
+
+    // Trigger a re-render when physics is active
+    invalidate();
   });
 
   return (
@@ -96,6 +109,7 @@ function Pointer({ vec = new THREE.Vector3(), isActive }) {
       0.2
     );
     ref.current.setNextKinematicTranslation(targetVec);
+    invalidate();
   });
 
   return (
@@ -112,16 +126,31 @@ function Pointer({ vec = new THREE.Vector3(), isActive }) {
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
+  const device = useDeviceInfo();
+
+  // Determine sphere count based on device
+  const sphereCount = device.isMobile
+    ? MOBILE_SPHERE_COUNT
+    : device.isTablet
+    ? TABLET_SPHERE_COUNT
+    : DESKTOP_SPHERE_COUNT;
+
+  // Stable sphere configs — memoized by count
+  const sphereConfigs = useMemo(
+    () => createSphereConfigs(sphereCount, textures.length),
+    [sphereCount]
+  );
 
   useEffect(() => {
-    const handleScroll = () => {
+    // Throttle scroll handler to fire max every 100ms
+    const handleScroll = throttle(() => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const workElem = document.getElementById("work");
       if (workElem) {
         const threshold = workElem.getBoundingClientRect().top;
         setIsActive(scrollY > threshold);
       }
-    };
+    }, 100);
     
     let scrollInterval = null;
     let scrollTimeout = null;
@@ -181,19 +210,38 @@ const TechStack = () => {
         if (material.emissiveMap) material.emissiveMap.dispose();
         material.dispose();
       });
+      // Dispose shared geometry
+      sphereGeometry.dispose();
     };
   }, [materials]);
+
+  // Canvas DPR: mobile max 1.5, desktop max 2
+  const dprRange = device.isMobile ? [1, 1.5] : [1, 2];
+
+  // Disable post-processing on mobile/tablet (< 768px) to fix framebuffer error
+  const enablePostProcessing = device.isDesktop;
 
   return (
     <div className="techstack">
       <h2>My Techstack</h2>
 
       <Canvas
-        shadows
-        dpr={[1, 2]}
-        gl={{ alpha: true, stencil: false, depth: true, antialias: false }}
+        shadows={!device.isMobile}
+        dpr={dprRange}
+        frameloop="demand"
+        gl={{
+          alpha: true,
+          stencil: enablePostProcessing,
+          depth: true,
+          antialias: !device.isMobile,
+          powerPreference: "high-performance",
+        }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-        onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
+        onCreated={(state) => {
+          state.gl.toneMappingExposure = 1.5;
+          // Trigger initial render
+          invalidate();
+        }}
         className="tech-canvas"
       >
         <ambientLight intensity={1} />
@@ -202,17 +250,17 @@ const TechStack = () => {
           penumbra={1}
           angle={0.2}
           color="white"
-          castShadow
-          shadow-mapSize={[512, 512]}
+          castShadow={!device.isMobile}
+          shadow-mapSize={device.isMobile ? [256, 256] : [512, 512]}
         />
         <directionalLight position={[0, 5, -4]} intensity={2} />
         <Physics gravity={[0, 0, 0]}>
           <Pointer isActive={isActive} />
-          {spheres.map((props, i) => (
+          {sphereConfigs.map((props, i) => (
             <SphereGeo
               key={i}
-              {...props}
-              material={materials[Math.floor(Math.random() * materials.length)]}
+              scale={props.scale}
+              material={materials[props.materialIndex]}
               isActive={isActive}
             />
           ))}
@@ -222,9 +270,11 @@ const TechStack = () => {
           environmentIntensity={0.5}
           environmentRotation={[0, 4, 2]}
         />
-        <EffectComposer enableNormalPass={false}>
-          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-        </EffectComposer>
+        {enablePostProcessing && (
+          <EffectComposer enableNormalPass={false}>
+            <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );

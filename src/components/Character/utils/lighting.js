@@ -1,15 +1,19 @@
 import * as THREE from "three";
 import { RGBELoader } from "three-stdlib";
 import { gsap } from "gsap";
+import { getCappedDPR } from "../../../hooks/useMobile";
 
 const setLighting = (scene) => {
+  const isMobile = window.innerWidth <= 767;
+  const shadowRes = isMobile ? 256 : 1024;
+
   // Soft neutral directional light — warm white instead of red
   const directionalLight = new THREE.DirectionalLight(0xe8e0d8, 0);
   directionalLight.intensity = 0;
   directionalLight.position.set(-0.47, -0.32, -1);
-  directionalLight.castShadow = true;
-  directionalLight.shadow.mapSize.width = 1024;
-  directionalLight.shadow.mapSize.height = 1024;
+  directionalLight.castShadow = !isMobile;
+  directionalLight.shadow.mapSize.width = shadowRes;
+  directionalLight.shadow.mapSize.height = shadowRes;
   directionalLight.shadow.camera.near = 0.5;
   directionalLight.shadow.camera.far = 50;
   scene.add(directionalLight);
@@ -17,8 +21,11 @@ const setLighting = (scene) => {
   // Subtle warm point light — reduced intensity
   const pointLight = new THREE.PointLight(0xf5f0eb, 0, 100, 3);
   pointLight.position.set(3, 12, 4);
-  pointLight.castShadow = true;
+  pointLight.castShadow = !isMobile;
   scene.add(pointLight);
+
+  // Store HDR texture for disposal
+  let hdrTexture = null;
 
   new RGBELoader()
     .setPath("/models/")
@@ -27,6 +34,7 @@ const setLighting = (scene) => {
       scene.environment = texture;
       scene.environmentIntensity = 0;
       scene.environmentRotation.set(5.76, 85.85, 1);
+      hdrTexture = texture;
     });
 
   function setPointLight(screenLight) {
@@ -60,7 +68,20 @@ const setLighting = (scene) => {
     });
   }
 
-  return { setPointLight, turnOnLights };
+  function dispose() {
+    if (hdrTexture) {
+      hdrTexture.dispose();
+      hdrTexture = null;
+    }
+    if (directionalLight.shadow.map) {
+      directionalLight.shadow.map.dispose();
+    }
+    if (pointLight.shadow.map) {
+      pointLight.shadow.map.dispose();
+    }
+  }
+
+  return { setPointLight, turnOnLights, dispose };
 };
 
 export default setLighting;

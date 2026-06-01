@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import setCharacter from "./utils/character";
 import setLighting from "./utils/lighting";
@@ -12,17 +12,22 @@ import {
 } from "./utils/mouseUtils";
 import setAnimations from "./utils/animationUtils";
 import { setProgress } from "../Loading";
+import { getCappedDPR, hasWebGL, isTouchDevice, rafThrottle } from "../../hooks/useMobile";
 
 const Scene = () => {
   const canvasDiv = useRef(null);
   const hoverDivRef = useRef(null);
   const sceneRef = useRef(new THREE.Scene());
   const { setLoading } = useLoading();
+  const [webglSupported] = useState(() => hasWebGL());
 
   useEffect(() => {
-    if (!canvasDiv.current) return;
+    if (!canvasDiv.current || !webglSupported) return;
 
     let active = true;
+    const isTouch = isTouchDevice();
+    const screenWidth = window.innerWidth;
+    const isMobileScreen = screenWidth <= 767;
 
     let rect = canvasDiv.current.getBoundingClientRect();
     let container = { width: rect.width, height: rect.height };
@@ -31,10 +36,13 @@ const Scene = () => {
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true,
+      antialias: !isMobileScreen,
+      powerPreference: "high-performance",
+      stencil: false,
+      depth: true,
     });
     renderer.setSize(container.width, container.height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(getCappedDPR(screenWidth));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
     canvasDiv.current.appendChild(renderer.domElement);
@@ -105,11 +113,12 @@ const Scene = () => {
     let mouse = { x: 0, y: 0 };
     let interpolation = { x: 0.1, y: 0.2 };
 
-    const onMouseMove = (event) => {
+    // Throttle mousemove with RAF guard to prevent layout thrashing
+    const onMouseMove = rafThrottle((event) => {
       handleMouseMove(event, (x, y) => {
         mouse = { x, y };
       });
-    };
+    });
 
     let debounce;
     const onTouchStart = (event) => {
@@ -141,7 +150,10 @@ const Scene = () => {
       });
     };
 
-    document.addEventListener("mousemove", onMouseMove);
+    // Only add mousemove on non-touch devices
+    if (!isTouch) {
+      document.addEventListener("mousemove", onMouseMove);
+    }
     
     const landingDiv = document.getElementById("landingDiv");
     if (landingDiv) {
@@ -150,8 +162,19 @@ const Scene = () => {
     }
 
     let animationFrameId;
+    let frameCount = 0;
+    // On mobile, skip every other frame for ~30fps target
+    const frameSkip = isMobileScreen ? 2 : 1;
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      frameCount++;
+
+      // Always update delta to keep clock accurate
+      const delta = clock.getDelta();
+
+      if (frameCount % frameSkip !== 0) return;
+
       if (headBone) {
         handleHeadRotation(
           headBone,
@@ -163,7 +186,6 @@ const Scene = () => {
         );
         light.setPointLight(screenLight);
       }
-      const delta = clock.getDelta();
       if (mixer) {
         mixer.update(delta);
       }
@@ -205,6 +227,7 @@ const Scene = () => {
 
       scene.clear();
       renderer.dispose();
+      light.dispose();
       
       if (hoverCleanup) hoverCleanup();
 
@@ -212,7 +235,9 @@ const Scene = () => {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
       
-      document.removeEventListener("mousemove", onMouseMove);
+      if (!isTouch) {
+        document.removeEventListener("mousemove", onMouseMove);
+      }
       if (landingDiv) {
         landingDiv.removeEventListener("touchstart", onTouchStart);
         landingDiv.removeEventListener("touchend", onTouchEnd);
@@ -221,7 +246,20 @@ const Scene = () => {
         }
       }
     };
-  }, [setLoading]);
+  }, [setLoading, webglSupported]);
+
+  // WebGL fallback
+  if (!webglSupported) {
+    return (
+      <div className="character-container">
+        <div className="character-model" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', color: 'var(--textSecondary)', fontSize: '14px', padding: '20px' }}>
+            3D content requires WebGL support.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="character-container">
